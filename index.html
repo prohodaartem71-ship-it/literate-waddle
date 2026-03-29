@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>История нейросетей</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background: #0f172a;
+      color: #e2e2e2;
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 30% 70%,
+        rgba(126, 34, 206, 0.05) 0,
+        transparent 30%),
+        radial-gradient(circle at 70% 20%,
+        rgba(56, 189, 248, 0.07) 0,
+        transparent 30%);
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 15px;
+    }
+
+    header {
+      background: #1e293b;
+      background-image: radial-gradient(circle at 40% 20%,
+        rgba(126, 34, 206, 0.15),
+        transparent 40%);
+      padding: 30px 15px;
+      text-align: center;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg,
+        #a78bfa, #38bdf8, #a78bfa);
+      animation: headerBar 3s ease-in-out infinite alternate;
+    }
+    @keyframes headerBar {
+      0%   { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+    header h1 {
+      font-size: 1.9rem;
+      margin-bottom: 8px;
+      color: #c4b5fd;
+      position: relative;
+      z-index: 1;
+    }
+    header p {
+      font-size: 1.05rem;
+      opacity: 0.9;
+      color: #cbd5e1;
+    }
+    .author {
+      font-size: 0.95rem;
+      margin-top: 6px;
+      font-style: italic;
+      opacity: 0.8;
+      color: #a5b4fc;
+    }
+
+    section {
+      background: #1e293b;
+      padding: 20px 16px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom,
+        #a78bfa, #38bdf8);
+      opacity: 0.7;
+    }
+    section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+    h2 {
+      color: #c4b5fd;
+      font-size: 1.45rem;
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 10px;
+    }
+    h2::before {
+      content: "⚡";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 1rem;
+      opacity: 0.6;
+      transform: translate(0, 2px);
+    }
+    h3 {
+      color: #a5b4fc;
+      font-size: 1.2rem;
+      margin: 16px 0 8px;
+    }
+    p {
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+    ul, ol {
+      margin-left: 18px;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+    li {
+      margin-bottom: 6px;
+      position: relative;
+      padding-left: 6px;
+    }
+    li::before {
+      content: "•";
+      color: #38bdf8;
+      position: absolute;
+      left: -10px;
+      opacity: 0.7;
+      animation: blink 1.8s infinite alternate;
+    }
+    @keyframes blink {
+      0%   { opacity: 0.5; }
+      100% { opacity: 0.9; }
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 14px;
+      background: #334155;
+      color: #f1f5f9;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      background: #475569;
+      box-shadow: 0 0 8px rgba(148, 163, 184, 0.3);
+    }
+
+    .toggle-content {
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: #2a3448;
+      border-radius: 8px;
+      border-left: 4px solid #a78bfa;
+      box-shadow: 0 0 6px rgba(167, 139, 250, 0.25);
+      display: none;
+      font-size: 0.95rem;
+      border: 1px solid rgba(167, 139, 250, 0.1);
+    }
+    .toggle-content.open {
+      display: block;
+    }
+
+    .input-row {
+      margin-top: 10px;
+    }
+    .input-row input {
+      width: 100%;
+      padding: 8px 10px;
+      background: #334155;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      color: #f1f5f9;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .input-row input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }
+    #result-area {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #334155;
+      border-radius: 8px;
+      border-left: 3px solid #38bdf8;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.25);
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      border-top: 1px solid #334155;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 767px) {
+      header h1 { font-size: 1.6rem; }
+      .container { padding: 14px 10px; }
+      section { padding: 16px 12px; margin-bottom: 16px; }
+      h2 { font-size: 1.35rem; }
+      h3 { font-size: 1.1rem; }
+      p, ul, li { font-size: 0.95rem; }
+      .btn { font-size: 0.9rem; padding: 6px 12px; }
+      footer { font-size: 0.9rem; }
+    }
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.4rem; }
+      section { padding: 14px 10px; }
+      h2 { font-size: 1.2rem; }
+      p, ul, li { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+<script>
+  function toggleText(id) {
+    const block = document.getElementById(id);
+    block.classList.toggle("open");
+  }
+
+  function showResult() {
+    const input = document.getElementById("user-input").value.trim();
+    const resultDiv = document.getElementById("result-area");
+
+    if (input.length === 0) {
+      resultDiv.textContent = "Вы ничего не ввели.";
+    } else {
+      resultDiv.textContent = "Вы написали: «" + input + "» — это ваше мнение о нейросетях.";
+    }
+    resultDiv.style.display = "block";
+  }
+</script>
+
+  <header>
+    <div class="container">
+      <h1>История нейросетей</h1>
+      <p>Как искусственные нейронные сети меняют наш мир</p>
+      <div class="author">Автор: Мартынников Вениамин Сергеевич, ученик 10 «Б» класса</div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <section>
+      <h2>Что такое нейросеть?</h2>
+      <p>Нейросеть — это компьютерная модель, вдохновлённая работой человеческого мозга. Она состоит из множества искусственных нейронов, которые связаны между собой и обучаются распознавать закономерности в данных.</p>
+      <button class="btn" onclick="toggleText('brain-details')">Подробнее про аналогию с мозгом</button>
+      <div class="toggle-content" id="brain-details">
+        <p>Человеческий мозг состоит из миллиардов нейронов, которые передают сигналы друг другу. Искусственная нейронная сеть имитирует это поведение: каждый «искусственный нейрон» получает сигналы, обрабатывает их и отправляет дальше. Так сеть «учится» находить скрытые закономерности в информации.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Истоки: первые идеи и модель нейрона</h2>
+      <p>В 1943 году учёные Уоррен МакКаллок и Уолтер Питтс предложили математическую модель искусственного нейрона, которая могла выполнять простые логические операции.</p>
+      <button class="btn" onclick="toggleText('early-details')">Почему это была важная работа</button>
+      <div class="toggle-content" id="early-details">
+        <p>Их модель показала, что можно описать работу нейронов языком математики. Это стало основой для дальнейших исследований в области искусственного интеллекта и нейронных сетей, хотя тогда ещё не было достаточно мощных компьютеров и данных.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Перцептроны и первые нейросети 1950–1960‑х</h2>
+      <p>В 1958 году психолог Фрэнк Розенблатт создал перцептрон — первую обучающуюся нейронную сеть, которая могла распознавать простые образы и делить объекты на классы.</p>
+      <button class="btn" onclick="toggleText('perceptron-details')">Идея простого перцептрона</button>
+      <div class="toggle-content" id="perceptron-details">
+        <p>Перцептрон получал несколько входных сигналов, умножал их на веса, суммировал и сравнивал результат с порогом. Если сумма была выше порога — сеть «говорила да», если ниже — «нет». Это простая, но очень важная модель, ставшая основой для будущих нейросетей.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Что вы думаете о нейросетях?</h2>
+      <p>Напишите одно‑два предложения про нейросети, и сайт покажет ваше мнение.</p>
+      <div class="input-row">
+        <input type="text" id="user-input" placeholder="Например: «Нейросети — это будущее»" />
+        <button class="btn" style="margin-top: 6px;" onclick="showResult()">Показать мнение</button>
+      </div>
+      <div id="result-area"></div>
+    </section>
+
+    <section>
+      <h2>Современные нейросети и ИИ‑ассистенты</h2>
+      <p>С 2020‑х годов появились крупные языковые модели и нейросети, которые помогают объяснять темы, писать тексты и отвечать на вопросы.</p>
+      <button class="btn" onclick="toggleText('ai-details')">Какие задачи выполняют современные нейросети</button>
+      <div class="toggle-content" id="ai-details">
+        <ul>
+          <li>объясняют сложные темы простым языком,</li>
+          <li>помогают с рефератами, сочинениями и планами докладов,</li>
+          <li>проверяют и улучшают грамматику и структуру текстов,</li>
+          <li>помогают учителям генерировать задания и тесты,</li>
+          <li>переводят тексты и помогают с иностранными языками.</li>
+        </ul>
+        <p>Нейросети ещё не заменяют учителя, но становятся мощным помощником в учёбе и работе.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Полезные нейросети для школьников, студентов и учителей</h2>
+      <p>Ниже — несколько популярных нейросетей, которые помогают в учебе и подготовке к занятиям.</p>
+      <div class="toggle-content" style="display:block; border-left: 3px solid #a78bfa; margin-bottom:10px;">
+        <h3>Для объяснения тем и написания текстов</h3>
+        <ul>
+          <li><strong>ChatGPT (OpenAI)</strong> — помогает с объяснением тем, планами сочинений, анализом текстов.</li>
+          <li><strong>Perplexity AI</strong> — даёт ответы с ссылками на источники и удобен для поиска информации.</li>
+          <li><strong>Gemini (Google)</strong> — помогает в науках, программировании и анализе данных.</li>
+        </ul>
+      </div>
+      <div class="toggle-content" style="display:block; border-left: 3px solid #38bdf8;">
+        <h3>Для математики и точных наук</h3>
+        <ul>
+          <li><strong>Math‑ассистенты (например, MathGPT)</strong> — помогают решать задачи, уравнения и объяснять шаги решения.</li>
+          <li><strong>Wolfram|Alpha</strong> — не классическая нейросеть, но часто используется вместе с ИИ‑помощниками.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <p>Автор учебного проекта: Мартынников Вениамин Сергеевич, ученик 10 «Б» класса</p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleText(id) {
+      const block = document.getElementById(id);
+      block.classList.toggle("open");
+    }
+
+    function showResult() {
+      const input = document.getElementById("user-input").value.trim();
+      const resultDiv = document.getElementById("result-area");
+
+      if (input.length === 0) {
+        resultDiv.textContent = "Вы ничего не ввели.";
+      } else {
+        resultDiv.textContent = "Вы написали: «" + input + "»
+
